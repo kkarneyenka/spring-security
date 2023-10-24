@@ -17,11 +17,13 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pl.training.shop.security.csrf.CustomCsrfTokenRepository;
 import pl.training.shop.security.users.JpaUserDetailService;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -106,6 +108,15 @@ public class SecurityConfiguration {
         return new SecurityEvaluationContextExtension();
     }
 
+   public CorsConfigurationSource corsConfigurationSource() {
+        var configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("https://example.com"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        var source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JpaUserDetailService jpaUserDetailService,
                                                    CustomCsrfTokenRepository csrfTokenRepository) throws Exception {
@@ -132,16 +143,7 @@ public class SecurityConfiguration {
                             config.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()); // XorCsrfTokenRequestAttributeHandler
                         }
                 )
-                .cors(config -> {
-                    CorsConfigurationSource source = request -> {
-                        var corsConfig = new CorsConfiguration();
-                        corsConfig.setAllowedOrigins(List.of("example.com", "example.org"));
-                        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-                        corsConfig.setAllowedHeaders(List.of("*"));
-                        return corsConfig;
-                    };
-                    config.configurationSource(source);
-                })
+                .cors(config -> config.configurationSource(corsConfigurationSource()))
                 //.anonymous(AbstractHttpConfigurer::disable)
                 .userDetailsService(jpaUserDetailService)
                 .httpBasic(withDefaults())
