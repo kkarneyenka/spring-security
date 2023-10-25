@@ -7,6 +7,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.encrypt.BytesEncryptor;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -184,6 +188,21 @@ public class SecurityConfiguration {
                         //.accessDeniedPage("/access-denied.html")
                 )*/
                 .build();
+    }
+
+    public void test() {
+        String salt = KeyGenerators.string().generateKey();
+        String password = "secret";
+        String valueToEncrypt = "admin";
+
+        BytesEncryptor encryptor = Encryptors.standard(password, salt);
+        byte [] encryptedBytes = encryptor.encrypt(valueToEncrypt.getBytes());
+        byte [] decryptedBytes = encryptor.decrypt(encryptedBytes);
+
+
+        TextEncryptor textEncryptor = Encryptors.text(password, salt);
+        var encryptedText = textEncryptor.encrypt(valueToEncrypt);
+        var decryptedText = textEncryptor.decrypt(encryptedText);
     }
 
 }
