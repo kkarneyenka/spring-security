@@ -17,7 +17,6 @@ public class SecurityInitializer implements ApplicationRunner {
 
     public static final String USER_EMAIL = "admin@training.pl";
     public static final String USER_NAME = "admin";
-    public static final String USER_RAW_PASSWORD = "";
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
 
     private final JpaUserRepository userRepository;

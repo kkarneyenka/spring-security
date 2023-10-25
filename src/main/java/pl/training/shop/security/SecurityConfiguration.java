@@ -190,17 +190,16 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    public void test() {
+    public static void main(String args[]) {
         String salt = KeyGenerators.string().generateKey();
         String password = "secret";
         String valueToEncrypt = "admin";
 
-        BytesEncryptor encryptor = Encryptors.standard(password, salt);
-        byte [] encryptedBytes = encryptor.encrypt(valueToEncrypt.getBytes());
-        byte [] decryptedBytes = encryptor.decrypt(encryptedBytes);
+        var bytesEncryptor = Encryptors.standard(password, salt);
+        byte [] encryptedBytes = bytesEncryptor.encrypt(valueToEncrypt.getBytes());
+        byte [] decryptedBytes = bytesEncryptor.decrypt(encryptedBytes);
 
-
-        TextEncryptor textEncryptor = Encryptors.text(password, salt);
+        var textEncryptor = Encryptors.text(password, salt);
         var encryptedText = textEncryptor.encrypt(valueToEncrypt);
         var decryptedText = textEncryptor.decrypt(encryptedText);
     }
